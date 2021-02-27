@@ -66,15 +66,12 @@ function _formatHistoryItem (abv, vol, actionTarget) {
     return block;
 }
 
-function doActionAdd (params) {
-    var strRowNum = params.actions[0].value;
-    var rowNum = Number(params.actions[0].value);
-
-    openSlackModal(params.trigger_id, {
+function _addReportWithDialog (rowNum, triggerId) {
+    openSlackModal(triggerId, {
         type: "modal",
         title: { type: "plain_text", text: "Add Report" },
         callback_id: "add",
-        private_metadata: strRowNum,
+        private_metadata: rowNum + "",
         submit: { type: "plain_text", text: "Save" },
         close: { type: "plain_text", text: "Close" },
         blocks: [
@@ -101,6 +98,14 @@ function doActionAdd (params) {
     });
 
     return ContentService.createTextOutput("");
+}
+
+function doActionAdd (params) {
+    return _addReportWithDialog(params.actions[0].value, params.trigger_id);
+}
+
+function doShortcutAdd (params) {
+    return _addReportWithDialog(2, params.trigger_id);
 }
 
 function doSubmitAdd (params) {
@@ -257,6 +262,12 @@ function doPost (e) {
                 return doSubmitAdd(params);
             } else {
                 throw "Unknown view";
+            }
+        } else if (params.type == 'shortcut') {
+            if (params.callback_id == "add") {
+                return doShortcutAdd(params);
+            } else {
+                throw "Unknown shortcut";
             }
         } else {
             "Unknown action type";
