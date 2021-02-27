@@ -273,7 +273,7 @@ function doPost (e) {
             "Unknown action type";
         }
     } else { /* slash command */
-        var match = params.text.match(/([0-9.]+) ([0-9.]+)/);
+        var match = params.text.match(/([0-9.]+)[ 　]([0-9.]+)/);
         if (match) {
             return doAddLogToday(match[1], match[2]);
         } else {
